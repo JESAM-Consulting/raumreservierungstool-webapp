@@ -1,0 +1,149 @@
+@import "../../../styles/mixins/index.scss";
+
+.home-left-right-content-alignment {
+  margin: 0 26px;
+  background: #fff;
+  height: calc(100vh - 170px - 50px);
+  margin-bottom: 50px;
+  border-radius: 3px;
+
+  @include breakpoint("sm-max") {
+    margin-bottom: 48px;
+  }
+
+  .home-header-alignment {
+    display: flex;
+    align-items: center;
+    padding: 23px 29px;
+    justify-content: space-between;
+    @include breakpoint("sm-max") {
+      display: block;
+      padding: 15px;
+    }
+    .right-content {
+        @include breakpoint("sm-max") {
+            display: none;
+        }
+      button {
+        border: none;
+        padding: 13px 20px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 14px;
+        background: #144337;
+        border-radius: 20px;
+        font-family: "Work Sans", sans-serif;
+        cursor: pointer;
+        color: #ffffff;
+      }
+    }
+
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 17px;
+
+      @include breakpoint("sm-max") {
+        gap: 10px;
+      }
+
+      .right-page {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        @include breakpoint("sm-max") {
+          gap: 10px;
+        }
+        img {
+          cursor: pointer;
+          transform: rotate(180deg);
+        }
+      }
+
+      .left-page {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+
+        @include breakpoint("sm-max") {
+          gap: 10px;
+        }
+
+        img {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .center-content {
+      display: flex;
+      align-items: center;
+      gap: 26px;
+
+      @include breakpoint("sm-max") {
+        gap: 10px;
+      }
+    }
+
+    .select-dropdown {
+      select {
+        border: 1px solid #a4a4a4;
+        border-radius: 20px;
+        height: 22px;
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 14px;
+        color: #a4a4a4;
+        padding: 0 12px;
+        font-family: "Work Sans", sans-serif;
+        width: 153px;
+        @include breakpoint("sm-max") {
+          width: 107px;
+          padding: 0 4px;
+        }
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+
+    .left-content {
+        @include breakpoint("sm-max") {
+            display: flex;
+        align-items: center;
+        padding: 0 0 20px 0;
+        justify-content: space-between;
+        }
+      p {
+        font-weight: 400;
+        font-size: 24px;
+        line-height: 28px;
+        color: #000000;
+
+        @include breakpoint("sm-max") {
+            font-weight: 400;
+font-size: 16px;
+line-height: 19px;
+        }
+      }
+
+      button {
+        padding: 8px 10px;
+        color: #fff;
+        border: none;
+        font-weight: 400;
+        font-size: 10px;
+        background: #144337;
+        border-radius: 20px;
+        line-height: 12px;
+        color: #ffffff;
+        display: none;
+
+        @include breakpoint("sm-max") {
+            display: block;
+        }
+      }
+    }
+  }
+}

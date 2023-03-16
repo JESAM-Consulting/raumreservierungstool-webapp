@@ -1,0 +1,18 @@
+@import "../../../../styles/mixins/index.scss";
+
+footer {
+  padding: 18px 26px;
+  background-color: #fff;
+
+  span {
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: #000000;
+    display: block;
+
+    @include breakpoint("sm-max") {
+      text-align: center;
+    }
+  }
+}

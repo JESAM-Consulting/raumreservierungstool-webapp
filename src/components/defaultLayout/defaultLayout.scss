@@ -1,0 +1,23 @@
+@import '../../../styles/mixins/index.scss';
+
+.defalut-layout {
+    display: flex;
+    @include breakpoint("sm-max") {
+        display: block;
+    }
+    .sidebar-layout {
+        width: 277px;
+
+        @include breakpoint("sm-max")  {
+            display: none;
+        }
+    }
+
+    .children-layout {
+        width: calc(100% - 277px);
+   
+        @include breakpoint("sm-max") {
+            width: 100%;
+        }
+    }
+}
