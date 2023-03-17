@@ -1,5 +1,5 @@
 import * as ReactDOM from "react-dom";
-import React, { useEffect, useState , useRef} from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Month,
   EventFieldsMapping,
@@ -19,58 +19,76 @@ import {
   Agenda,
 } from "@syncfusion/ej2-react-schedule";
 import ReserviereModal from "../ReserviereModal";
-import axios from 'axios';
+import axios from "axios";
 import moment from "moment";
 
-const ApiRoutes = "http://192.168.29.173:8093/api/v1"
+// const ApiRoutes = "http://192.168.29.173:8093/api/v1";
+const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 
-function Calender() {
-
-  let scheduleObj = useRef<any>(null)
-  const [meetingData, setMeetingData] = useState<any>([])
+function Calender(props:any) {
+  const { selectedRoom } = props;
+  let scheduleObj = useRef<any>();  
+  const [meetingData, setMeetingData] = useState<any>([]);
   const [isAddEvent, setIsAddEvent] = useState<any>({
-    name:"",
-    Raum:"",
-    Datum:"",
-    Uhrzeit:"",
-    Länge :"",
-    Beschreibung:""
-  })
+    name: "",
+    Raum: "",
+    Datum: "",
+    Uhrzeit: "",
+    Länge: "",
+    Beschreibung: "",
+  });
+
 
   useEffect(() => {
-    getScheduleDetails()
-  },[])
-
-  console.log("meetingData",meetingData);
-  
+    getScheduleDetails();
+  }, [selectedRoom]);
 
   const getScheduleDetails = () => {
-    axios.get(`${ApiRoutes}/meeting`)
-    .then((res) => { 
-      console.log("Beschreibung",res?.data?.payload?.data);
-      // setMeetingData(res?.data?.payload?.data)
-      const array = [];
+    axios
+      .get(`${ApiRoutes}/meeting`)
+      .then((res) => {
+        // console.log("Beschreibung", res?.data?.payload?.data);
+        const array:any = [];
 
-      res?.data?.payload?.data?.map((data:any,i:any) => {
-       const test:any = {
-         id:data?._id,
-         Subject:data?.name,
-         StartTime:moment(data?.startTime).subtract(330,"minute")._d  ,
-         EndTime:moment(data?.endTime).subtract(330,"minute")._d
-      }
-      array.push(test)
+        if (selectedRoom?.roomID === "all") {
+          res?.data?.payload?.data?.map((data: any, i: any) => {
+            const test: any = {
+              id: data?._id,
+              Subject: data?.name,
+              StartTime: moment(data?.startTime).subtract(330, "minute")._d,
+              EndTime: moment(data?.endTime).subtract(330, "minute")._d,
+              length: data?.length,
+              description:data?.description,
+              room_id : data?.room_id?._id
+            };
+            array.push(test);
+          });
+        }else{
+          const FilterData = res?.data?.payload?.data?.filter((item:any) => item?.room_id?._id === selectedRoom?.roomID)
+          FilterData?.map((data: any, i: any) => {
+            const Filterobj: any = {
+              id: data?._id,
+              Subject: data?.name,
+              StartTime: moment(data?.startTime).subtract(330, "minute")._d,
+              EndTime: moment(data?.endTime).subtract(330, "minute")._d,
+              length: data?.length,
+              description:data?.description,
+              room_id : data?.room_id?._id
+            };
+            array.push(Filterobj);
+          });
+            
+        }
+        setMeetingData(array);
       })
-      setMeetingData(array)
-      
-    })
-    .catch((error) => {
-        alert("Error")
-    })
-  }
+      .catch((error) => {
+        // alert("Error");
+      });
+  };
 
   const handleSubmit = () => {
-      scheduleObj.closeEditor();
-  }
+    scheduleObj.closeEditor();
+  };
 
   const data = [
     {
@@ -78,35 +96,32 @@ function Calender() {
       Subject: "Meeting",
       StartTime: new Date(2023, 2, 15, 10, 0),
       EndTime: new Date(2023, 2, 15, 12, 30),
-      Status: 'Completed',
-      Priority: 'High'
+      Status: "Completed",
+      Priority: "High",
     },
     {
       Id: 2,
       Subject: "Meeting 2",
       StartTime: new Date(2023, 2, 16, 10, 0),
       EndTime: new Date(2023, 2, 16, 12, 30),
-      Status: 'Completed',
-      Priority: 'High'
+      Status: "Completed",
+      Priority: "High",
     },
   ];
 
-  const editorTemplate =(event:any, props:any) => {
-      console.log("sdasdasd",event);
-      
+  const editorTemplate = (event: any, props: any) => {
+    if(event?.id){
+      const FilterData = meetingData?.find((item:any) => item?.id === event?.id)
+      console.log("FilterDaweqweta",FilterData);
+    }
+
+    
     return props !== undefined ? (
-      <div >
-        <div >
-          {/* <InputMobile
-            editAppointment={props}
-            IsStaff={this.state.IsStaff}
-            args={props}
-            startTime={this.state.startTime}
-            endTime={this.state.endTime}
-            addEvent={(values) => this.handleSubmit(values)}
-          /> */}
-          <ReserviereModal 
-            addEvent={()=> handleSubmit()}
+      <div>
+        <div>
+        
+          <ReserviereModal
+            addEvent={() => handleSubmit()}
             event={event}
             editAppointment={props}
             getScheduleDetails={getScheduleDetails}
@@ -116,26 +131,24 @@ function Calender() {
     ) : (
       <div />
     );
-  }
-
+  };
 
   return (
     <>
+    
       <ScheduleComponent
         selectedDate={new Date()}
         eventSettings={{
           dataSource: meetingData,
         }}
         cssClass="group-editing"
-        // resourceHeaderTemplate={(e)=>resourceHeaderTemplate(e,isAddEvent)}
-        editorTemplate={(e)=>editorTemplate(e,isAddEvent)}
-        // eventRendered={(e)=> onEventRendered(e)}
+        editorTemplate={(e:any) => editorTemplate(e, isAddEvent)}
         showQuickInfo={false}
-        ref={(schedule) =>(scheduleObj = schedule)
-        }
-
-        // width="100%"
-        // height="550px"
+        ref={(schedule) => (scheduleObj = schedule)}
+        startHour={"01:00"}
+        endHour={"12:00"}
+        width="100%"
+        height="700px"
       >
         <ViewsDirective>
           <ViewDirective option="WorkWeek" startHour="10:00" endHour="18:00" />

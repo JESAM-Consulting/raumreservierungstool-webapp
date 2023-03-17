@@ -1,19 +1,30 @@
-import React , {useState, useEffect} from "react";
+import React , {useState, useEffect} from "react";  
 import "./Home.scss";
 import DoubleArrow from "../../assets/icons/double-arrwo.svg";
 import SingleArrow from "../../assets/icons/single-arrow.svg";
 import ReserviereModal from "../../components/ReserviereModal";
 import DeineReservierungModal from "../../components/DeineReservierungModal";
 import Calender from "../../components/Calender/Calender";
-import CalenderData from "../../components/Calender/CalenderData";
 import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
-const ApiRoutes = "http://192.168.29.173:8093/api/v1";
+
+const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
+// const ApiRoutes = "http://192.168.29.173:8093/api/v1";
 
 export default function Home() {
 
   const [roomData, setRoomData] = useState([]);
+  const [addMeeting, isAddMeeting] = useState(false);
+  const [inputValue, setInputValue] = useState({
+    roomID:"all"
+  })
 
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setInputValue({ ...inputValue, [name]: value });
+  };
+  
 
   useEffect(() => {
     GetRoomDetails();
@@ -32,6 +43,18 @@ export default function Home() {
   return (
     <div>
       <div className="home-left-right-content-alignment">
+      <ToastContainer 
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable 
+          pauseOnHover
+          theme="light"
+        />
         <div className="home-header-alignment">
           <div className="left-content">
             <p>Raumreservierung </p>
@@ -39,7 +62,8 @@ export default function Home() {
           </div>
           <div className="center-content">
             <div className="select-dropdown">
-              <select>
+              <select name="roomID" defaultValue={inputValue?.roomID} onChange={(e)=> handleOnChange(e)}>
+              <option value="all">Wählen</option>
                 {roomData &&
                     roomData?.map((item, i) => {
                       return <option value={item?._id}>{item?.name}</option>;
@@ -64,17 +88,16 @@ export default function Home() {
           </div>
        
         <div className="right-content">
-          <button>Raum reservieren</button>
+          <button onClick={()=>isAddMeeting(true)}>Raum reservieren</button>
         </div>
       </div>
-      <Calender/>
+      <Calender selectedRoom={inputValue}/>
       </div>
-      {/* <ReserviereModal/> */}
-      {/* <DeineReservierungModal/> */}
+
+      {addMeeting && (
+        <ReserviereModal isAddMeeting={isAddMeeting}/> 
+      )}
      
-        {/* <CalenderData/> */}
-
-
     </div>
   );
 }

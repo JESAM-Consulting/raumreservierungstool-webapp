@@ -60,7 +60,7 @@
           align-items: center;
           justify-content: flex-end;
           width: 291px;
-
+          gap: 8px;
           @include breakpoint("sm-max") {
             justify-content: flex-start;
           }
@@ -150,6 +150,28 @@
         margin: 0 0 26px 0;
         line-height: 16px;
       }
+    }
+  }
+}
+
+.select-dropdown {
+  select {
+    border: 1px solid #a4a4a4;
+    border-radius: 20px;
+    height: 22px;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 14px;
+    color: #a4a4a4;
+    padding: 0 12px;
+    font-family: "Work Sans", sans-serif;
+    width: 153px;
+    @include breakpoint("sm-max") {
+      width: 107px;
+      padding: 0 4px;
+    }
+    &:focus {
+      outline: none;
     }
   }
 }
