@@ -10,7 +10,7 @@
   align-items: center;
   justify-content: center;
   background: rgba(217, 217, 217, 0.7);
-  z-index: 99;
+  z-index: 9;
 
   .reserviere-modal-box {
     background: #ffffff;
@@ -136,12 +136,22 @@
         }
       }
     }
+    .header-title{
+      display: flex;
+      justify-content: space-between;
+      margin: 0 0 50px 0;
+
+      button{
+        background: #ffffff;
+        border: #ffffff;
+      }
+    }
 
     h2 {
       font-weight: 400;
       font-size: 24px;
       line-height: 28px;
-      margin: 0 0 50px 0;
+      // margin: 0 0 50px 0;
       color: #000000;
 
       @include breakpoint("sm-max") {
@@ -149,7 +159,7 @@
         font-size: 14px;
         margin: 0 0 26px 0;
         line-height: 16px;
-      }
+      } 
     }
   }
 }

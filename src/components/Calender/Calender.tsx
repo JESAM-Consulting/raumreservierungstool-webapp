@@ -26,7 +26,7 @@ import moment from "moment";
 const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 
 function Calender(props:any) {
-  const { selectedRoom } = props;
+  const { selectedRoom ,isAddMeeting , addMeeting} = props;
   let scheduleObj = useRef<any>();  
   const [meetingData, setMeetingData] = useState<any>([]);
   const [isAddEvent, setIsAddEvent] = useState<any>({
@@ -43,13 +43,12 @@ function Calender(props:any) {
     getScheduleDetails();
   }, [selectedRoom]);
 
-  const getScheduleDetails = () => {
-    axios
+  const getScheduleDetails = async () => {
+    await axios
       .get(`${ApiRoutes}/meeting`)
       .then((res) => {
-        // console.log("Beschreibung", res?.data?.payload?.data);
         const array:any = [];
-
+        
         if (selectedRoom?.roomID === "all") {
           res?.data?.payload?.data?.map((data: any, i: any) => {
             const test: any = {
@@ -124,7 +123,9 @@ function Calender(props:any) {
             addEvent={() => handleSubmit()}
             event={event}
             editAppointment={props}
-            getScheduleDetails={getScheduleDetails}
+            getScheduleDetail={()=>getScheduleDetails()}
+            selectedRoom = {selectedRoom}
+            setMeetingData={setMeetingData}
           />
         </div>
       </div>
@@ -140,7 +141,7 @@ function Calender(props:any) {
         selectedDate={new Date()}
         eventSettings={{
           dataSource: meetingData,
-        }}
+        }} 
         cssClass="group-editing"
         editorTemplate={(e:any) => editorTemplate(e, isAddEvent)}
         showQuickInfo={false}
@@ -158,6 +159,9 @@ function Calender(props:any) {
 
         <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
       </ScheduleComponent>
+
+          {addMeeting && <ReserviereModal isAddMeeting={isAddMeeting} getScheduleDetail={getScheduleDetails}/>}
+
     </>
   );
 }

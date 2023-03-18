@@ -9,8 +9,12 @@ import "react-toastify/dist/ReactToastify.css";
 const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 
 export default function ReserviereModal(props) {
-  const { addEvent, editAppointment, event, getScheduleDetails, isAddMeeting } =
-    props;
+  const {
+    addEvent,
+    getScheduleDetail,
+    event,
+    isAddMeeting,
+  } = props;
   const [roomData, setRoomData] = useState([]);
   const [errors, setErrors] = useState({});
 
@@ -95,7 +99,7 @@ export default function ReserviereModal(props) {
     if (inputValue && !inputValue?.name) {
       isFormValid = false;
       errors["name"] = "*Bitte geben Sie den Titel ein";
-    }  
+    }
     if (inputValue && !inputValue?.room_id) {
       isFormValid = false;
       errors["roomId"] = "*Bitte wählen Sie Raum";
@@ -125,7 +129,7 @@ export default function ReserviereModal(props) {
     return isFormValid;
   };
 
-  const handleOnSubmitData = () => {
+  const handleOnSubmitData = async () => {
     if (validationData()) {
       const payload = {
         name: inputValue?.name,
@@ -139,20 +143,24 @@ export default function ReserviereModal(props) {
         length: inputValue?.length,
         description: inputValue?.description,
       };
-      axios
+      await axios
         .post(`${ApiRoutes}/meeting`, payload)
-        .then((response) => {
-          if (event) {
-            addEvent();
-          } else {
+        .then((res) => {
+          if (event === undefined) {
             isAddMeeting(false);
+          } else {
+            addEvent();
           }
+          getScheduleDetail();
+
           toast.success("Ermittlungsplan erfolgreich!");
-          getScheduleDetails();
         })
         .catch((error) => {
-          toast.error("Etwas ist schief gelaufen!!");
-          
+          toast.error(
+            error?.response?.data?.message === "Meeting already exists."
+              ? "Treffen existiert bereits."
+              : "Etwas ist schief gelaufen!!"
+          );
         });
     }
   };
@@ -176,11 +184,14 @@ export default function ReserviereModal(props) {
         .then((response) => {
           addEvent();
           toast.success("Datenaktualisierung erfolgreich!");
-          getScheduleDetails();
+          getScheduleDetail();
         })
         .catch((error) => {
-          toast.error("Etwas ist schief gelaufen!!");
-          getScheduleDetails();
+          toast.error(
+            error?.response?.data?.message === "Meeting already exists."
+              ? "Treffen existiert bereits."
+              : "Etwas ist schief gelaufen!!"
+          );
         });
     }
   };
@@ -188,16 +199,17 @@ export default function ReserviereModal(props) {
   return (
     <div>
       <div className="modal-wrapper">
-      
         <div className="reserviere-modal-box">
-          <button onClick={() => (event ? addEvent() : isAddMeeting(false))}>
-            X
-          </button>
-          <h2>
-            {event?.id
-              ? "Deine Reservierung:"
-              : "Reserviere hier einen Meetingraum"}{" "}
-          </h2>
+          <div className="header-title">
+            <h2>
+              {event?.id
+                ? "Deine Reservierung:"
+                : "Reserviere hier einen Meetingraum"}{" "}
+            </h2>
+            <button onClick={() => (event ? addEvent() : isAddMeeting(false))}>
+              X
+            </button>
+          </div>
           <div className="left-right-alignment">
             <div className="grid-input">
               <div>
@@ -226,14 +238,12 @@ export default function ReserviereModal(props) {
                   value={inputValue?.room_id}
                   onChange={(e) => handleOnChange(e)}
                 >
-                  <option  selected>
-                    Wählen Sie Raum
-                  </option>
+                  <option selected>Wählen Sie Raum</option>
                   {roomData &&
                     roomData?.map((item, i) => {
                       return <option value={item?._id}>{item?.name}</option>;
                     })}
-                </select> 
+                </select>
 
                 <span style={{ color: "red", textAlign: "left" }}>
                   {errors["roomId"]}
