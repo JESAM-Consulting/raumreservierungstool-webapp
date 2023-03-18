@@ -14,8 +14,9 @@ export default function ReserviereModal(props) {
     getScheduleDetail,
     event,
     isAddMeeting,
+    roomData
   } = props;
-  const [roomData, setRoomData] = useState([]);
+  // const [roomData, setRoomData] = useState([]);
   const [errors, setErrors] = useState({});
 
   const [inputValue, setInputValue] = useState({
@@ -32,7 +33,7 @@ export default function ReserviereModal(props) {
   });
 
   useEffect(() => {
-    GetRoomDetails();
+    // GetRoomDetails();
     if (event) {
       if (event?.id) {
         setInputValue({

@@ -94,7 +94,7 @@ export default function Home() {
               </button>
             </div>
           </div>
-          <Calender selectedRoom={inputValue}  isAddMeeting={isAddMeeting} addMeeting={addMeeting} />
+          <Calender selectedRoom={inputValue} roomData={roomData} isAddMeeting={isAddMeeting} addMeeting={addMeeting} />
 
 
         </div>

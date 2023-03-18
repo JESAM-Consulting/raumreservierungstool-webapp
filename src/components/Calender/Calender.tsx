@@ -26,7 +26,7 @@ import moment from "moment";
 const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 
 function Calender(props:any) {
-  const { selectedRoom ,isAddMeeting , addMeeting} = props;
+  const { selectedRoom ,isAddMeeting ,  roomData , addMeeting} = props;
   let scheduleObj = useRef<any>();  
   const [meetingData, setMeetingData] = useState<any>([]);
   const [isAddEvent, setIsAddEvent] = useState<any>({
@@ -126,6 +126,7 @@ function Calender(props:any) {
             getScheduleDetail={()=>getScheduleDetails()}
             selectedRoom = {selectedRoom}
             setMeetingData={setMeetingData}
+            roomData={roomData}
           />
         </div>
       </div>
@@ -138,29 +139,38 @@ function Calender(props:any) {
     <>
     
       <ScheduleComponent
+      
         selectedDate={new Date()}
+        width="100%"
+        height="700px"
         eventSettings={{
           dataSource: meetingData,
         }} 
+        timeScale={{slotCount:2}}
+        
+        // timeScale={{
+        //         enable: true,
+        //         interval: this.state.interval,
+        //         slotCount: this.state.interval / 15,
+        //       }}  
         cssClass="group-editing"
         editorTemplate={(e:any) => editorTemplate(e, isAddEvent)}
         showQuickInfo={false}
         ref={(schedule) => (scheduleObj = schedule)}
-        startHour={"01:00"}
-        endHour={"12:00"}
-        width="100%"
-        height="700px"
+        // startHour={"01:00"}
+        // endHour={"12:00"}
+      
       >
         <ViewsDirective>
-          <ViewDirective option="WorkWeek" startHour="10:00" endHour="18:00" />
-          <ViewDirective option="Week" startHour="07:00" endHour="15:00" />
+          <ViewDirective option="WorkWeek" startHour="00:00" endHour="24:00" />
+          <ViewDirective option="Week" startHour="00:00" endHour="24:00" />
           <ViewDirective option="Month" showWeekend={false} />
         </ViewsDirective>
 
         <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
       </ScheduleComponent>
 
-          {addMeeting && <ReserviereModal isAddMeeting={isAddMeeting} getScheduleDetail={getScheduleDetails}/>}
+          {addMeeting && <ReserviereModal roomData={roomData} isAddMeeting={isAddMeeting} getScheduleDetail={getScheduleDetails}/>}
 
     </>
   );
