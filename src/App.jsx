@@ -12,3 +12,5 @@ function App() {
 }
 
 export default App
+
+export const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1"

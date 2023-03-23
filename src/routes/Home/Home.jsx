@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
+import { ApiRoutes } from "../../App";
 import "./Home.scss";
-import DoubleArrow from "../../assets/icons/double-arrwo.svg";
-import SingleArrow from "../../assets/icons/single-arrow.svg";
-import ReserviereModal from "../../components/ReserviereModal";
-import DeineReservierungModal from "../../components/DeineReservierungModal";
+
 import Calender from "../../components/Calender/Calender";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 // const ApiRoutes = "http://192.168.29.173:8093/api/v1";
+// const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 
 export default function Home() {
   const [roomData, setRoomData] = useState([]);
@@ -64,7 +62,7 @@ export default function Home() {
                   defaultValue={inputValue?.roomID}
                   onChange={(e) => handleOnChange(e)}
                 >
-                  <option value="all">Wählen</option>
+                  <option value="all">Raum auswählen</option>
                   {roomData &&
                     roomData?.map((item, i) => {
                       return <option value={item?._id}>{item?.name}</option>;

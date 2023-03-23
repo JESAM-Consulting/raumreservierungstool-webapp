@@ -1,24 +1,20 @@
 import React, { useState, useEffect } from "react";
+import { ApiRoutes } from "../../App";
 import "./ReserviereModal.scss";
 import axios from "axios";
 import moment from "moment";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+// import ApiRoutes from "../../ApiRoute"
 
 // const ApiRoutes = "http://192.168.29.173:8093/api/v1";
-const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
+// const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
+
+
 
 export default function ReserviereModal(props) {
-  const {
-    addEvent,
-    getScheduleDetail,
-    event,
-    isAddMeeting,
-    roomData
-  } = props;
-  // const [roomData, setRoomData] = useState([]);
+  const { addEvent, getScheduleDetail, event, isAddMeeting, roomData } = props;
   const [errors, setErrors] = useState({});
-
   const [inputValue, setInputValue] = useState({
     name: "",
     room_id: "",
@@ -117,10 +113,10 @@ export default function ReserviereModal(props) {
       isFormValid = false;
       errors["endTime"] = "*Bitte wählen Sie die Zeit der Enf";
     }
-    if (inputValue && !inputValue?.length) {
-      isFormValid = false;
-      errors["length"] = "*eingeben Länge";
-    }
+    // if (inputValue && !inputValue?.length) {
+    //   isFormValid = false;
+    //   errors["length"] = "*eingeben Länge";
+    // }
     if (inputValue && !inputValue?.description) {
       isFormValid = false;
       errors["description"] = "*Bitte geben Sie eine Beschreibung ein";
@@ -141,7 +137,7 @@ export default function ReserviereModal(props) {
         startTime: `${inputValue?.startDate}T${inputValue?.startTime}:00.000Z`,
         endTime: `${inputValue?.startDate}T${inputValue?.endTime}:00.000Z`,
 
-        length: inputValue?.length,
+        // length: inputValue?.length,
         description: inputValue?.description,
       };
       await axios
@@ -153,8 +149,7 @@ export default function ReserviereModal(props) {
             addEvent();
           }
           getScheduleDetail();
-
-          toast.success("Ermittlungsplan erfolgreich!");
+          toast.success("Meeting erfolgreich gebucht");
         })
         .catch((error) => {
           toast.error(
@@ -177,14 +172,14 @@ export default function ReserviereModal(props) {
         startTime: `${inputValue?.startDate}T${inputValue?.startTime}:00.000Z`,
         endTime: `${inputValue?.startDate}T${inputValue?.endTime}:00.000Z`,
 
-        length: inputValue?.length,
+        // length: inputValue?.length,
         description: inputValue?.description,
       };
       axios
         .put(`${ApiRoutes}/meeting/${event?.id}`, payload)
         .then((response) => {
           addEvent();
-          toast.success("Datenaktualisierung erfolgreich!");
+          toast.success("Buchungsaktualisierung erfolgreich!");
           getScheduleDetail();
         })
         .catch((error) => {
@@ -195,6 +190,20 @@ export default function ReserviereModal(props) {
           );
         });
     }
+  };
+
+  const handleOnDelete = () => {
+    console.log("event?.id",event?.id);
+    axios
+      .delete(`${ApiRoutes}/meeting/${event?.id}`)
+      .then((response) => {
+        addEvent();
+        toast.success("Buchung erfolgreich gelöscht!");
+        getScheduleDetail();
+      })
+      .catch((error) => {
+        toast.error("Etwas ist schief gelaufen!!");
+      });
   };
 
   return (
@@ -239,7 +248,7 @@ export default function ReserviereModal(props) {
                   value={inputValue?.room_id}
                   onChange={(e) => handleOnChange(e)}
                 >
-                  <option selected>Wählen Sie Raum</option>
+                  <option selected>Raum auswählen</option>
                   {roomData &&
                     roomData?.map((item, i) => {
                       return <option value={item?._id}>{item?.name}</option>;
@@ -258,6 +267,7 @@ export default function ReserviereModal(props) {
               <div className="sec-wdith">
                 <input
                   type="date"
+                  lang="de"
                   name="startDate"
                   value={inputValue?.startDate}
                   onChange={(e) => handleOnChange(e)}
@@ -299,7 +309,7 @@ export default function ReserviereModal(props) {
                 </span>
               </div>
             </div>
-            <div className="grid-input">
+            {/* <div className="grid-input">
               <div>
                 <span>Länge:</span>
               </div>
@@ -314,7 +324,7 @@ export default function ReserviereModal(props) {
                   {errors["length"]}
                 </span>
               </div>
-            </div>
+            </div> */}
             <div className="grid-input">
               <div>
                 <span>Beschreibung:</span>
@@ -335,7 +345,7 @@ export default function ReserviereModal(props) {
               <div className="five-wdith">
                 {event?.id ? (
                   <>
-                    <button onClick={() => addEvent()}>Löschen</button>
+                    <button onClick={() => handleOnDelete()}>Löschen</button>
                     <button onClick={() => handleOnUpdate()}>Speichern</button>
                   </>
                 ) : (

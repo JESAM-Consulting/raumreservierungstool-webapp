@@ -1,14 +1,10 @@
 import * as ReactDOM from "react-dom";
 import React, { useEffect, useState, useRef } from "react";
+import { ApiRoutes } from "../../App";
 import {
   Month,
-  EventFieldsMapping,
   Inject,
-  PopupOpenEventArgs,
-  ActionEventArgs,
-  ToolbarActionArgs,
   ScheduleComponent,
-  Schedule,
   ViewsDirective,
   ViewDirective,
   ResourcesDirective,
@@ -21,13 +17,84 @@ import {
 import ReserviereModal from "../ReserviereModal";
 import axios from "axios";
 import moment from "moment";
+import { registerLicense } from "@syncfusion/ej2-base";
+import * as numberingSystems from "./culture-files/numberingSystems.json";
+import * as gregorian from "./culture-files/ca-gregorian.json";
+import * as numbers from "./culture-files/numbers.json";
+import * as timeZoneNames from "./culture-files/timeZoneNames.json";
+import { Ajax, L10n, loadCldr } from "@syncfusion/ej2-base";
 
 // const ApiRoutes = "http://192.168.29.173:8093/api/v1";
-const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
+// const ApiRoutes = "https://api.fe-scheduler.rejoicehub.com/api/v1";
 
-function Calender(props:any) {
-  const { selectedRoom ,isAddMeeting ,  roomData , addMeeting} = props;
-  let scheduleObj = useRef<any>();  
+loadCldr(numberingSystems, gregorian, numbers, timeZoneNames);
+
+L10n.load({
+  es: {
+    schedule: {
+      day: "Heute",
+      week: "Woche",
+      workWeek: "Arbeitswoche",
+      month: "Monat",
+      agenda: "Agenda",
+      weekAgenda: "Agenda de la semana",
+      workWeekAgenda: "Agenda de la semana laboral",
+      monthAgenda: "Agenda del mes",
+      today: "Heute",
+    },
+    recurrenceeditor: {
+      none: "Ninguna",
+      daily: "Diario",
+      weekly: "Semanal",
+      monthly: "Mensual",
+      month: "Mes",
+      yearly: "Anual",
+      never: "Nunca",
+      until: "Hasta",
+      count: "Contar",
+      first: "primero",
+      second: "Segundo",
+      third: "Tercero",
+      fourth: "Cuarto",
+      last: "Último",
+      repeat: "Repetir",
+      repeatEvery: "Repite cada",
+      on: "Repetir en",
+      end: "Final",
+      onDay: "Día",
+      days: "Dias)",
+      weeks: "Semanas)",
+      months: "Meses)",
+      years: "Años)",
+      every: "cada",
+      summaryTimes: "veces)",
+      summaryOn: "en",
+      summaryUntil: "hasta",
+      summaryRepeat: "Repite",
+      summaryDay: "dias)",
+      summaryWeek: "semanas)",
+      summaryMonth: "meses)",
+      summaryYear: "años)",
+      monthWeek: "Mes Semana",
+      monthPosition: "Posición del mes",
+      monthExpander: "Expansor de mes",
+      yearExpander: "Expansor de año",
+      repeatInterval: "Intervalo de repetición",
+    },
+    calendar: {
+      today: "Heute",
+    },
+  },
+});
+
+registerLicense(
+  "MTM4NTc4OUAzMjMwMmUzNDJlMzBmSFFvZ25qMW9IVFUrem1hQVRNVDNXV3diMGJLSXdHNUIwOTBIZEFRb3RRPQ==;Mgo DSMBaFt/QHRqVVhkVFpHaV1KQmFJfFBmRGlafFRzdUU3HVdTRHRcQl5hSH5SdUZgWHdfc30=;Mgo DSMBMAY9C3t2VVhkQlFacldJXnxLdkx0RWFab196d1ZMY11BNQtUQF1hSn5QdERjWHxdc3VdRGVV;Mgo DSMBPh8sVXJ0S0J XE9AflRBQmFBYVF2R2BJflRzd19FYUwgOX1dQl9gSX1Rd0ViWnxdcXxWTmk=;MTM4NTc5M0AzMjMwMmUzNDJlMzBMV1B0aDJiR1o2MkhjZ2xHdDdYZ29ZY2FBbXliTSszdnVGU2pJR2RTMzdNPQ==;NRAiBiAaIQQuGjN/V0Z WE9EaFtKVmBWfFtpR2NbfE5xflZFal9QVAciSV9jS31TdUdiWX5dc3dUTmdZWA==;ORg4AjUWIQA/Gnt2VVhkQlFacldJXnxLdkx0RWFab196d1ZMY11BNQtUQF1hSn5QdERjWHxdc3VdT2ZV;MTM4NTc5NkAzMjMwMmUzNDJlMzBjTCs0NHFlL21md01EKzgzdmcxSjE2ak1MV2dRQTZjbUZjZ293ZTN6N1VvPQ==;MTM4NTc5N0AzMjMwMmUzNDJlMzBPTSswMG4rbm1qOG83dUY4OGF5THZHOVVWQVlwTUxKWGQ0YmJoR3diWmxnPQ==;MTM4NTc5OEAzMjMwMmUzNDJlMzBCWDBCUWdTWkhZbTFSeFRUQ2xiVHBNdWIzejlIKytOTllIT0RybDdxczJNPQ==;MTM4NTc5OUAzMjMwMmUzNDJlMzBJQS9BVGxYV2s1MHdwcWEzeXBPNFFVd3IxUzJHVFJmVWZyUlJyUTZQV2JBPQ==;MTM4NTgwMEAzMjMwMmUzNDJlMzBmSFFvZ25qMW9IVFUrem1hQVRNVDNXV3diMGJLSXdHNUIwOTBIZEFRb3RRPQ=="
+);
+
+function Calender(props: any) {
+  const { selectedRoom, isAddMeeting, roomData, addMeeting } = props;
+  let scheduleObj = useRef<any>();
+
   const [meetingData, setMeetingData] = useState<any>([]);
   const [isAddEvent, setIsAddEvent] = useState<any>({
     name: "",
@@ -38,7 +105,6 @@ function Calender(props:any) {
     Beschreibung: "",
   });
 
-
   useEffect(() => {
     getScheduleDetails();
   }, [selectedRoom]);
@@ -47,8 +113,8 @@ function Calender(props:any) {
     await axios
       .get(`${ApiRoutes}/meeting`)
       .then((res) => {
-        const array:any = [];
-        
+        const array: any = [];
+
         if (selectedRoom?.roomID === "all") {
           res?.data?.payload?.data?.map((data: any, i: any) => {
             const test: any = {
@@ -57,13 +123,16 @@ function Calender(props:any) {
               StartTime: moment(data?.startTime).subtract(330, "minute")._d,
               EndTime: moment(data?.endTime).subtract(330, "minute")._d,
               length: data?.length,
-              description:data?.description,
-              room_id : data?.room_id?._id
+              description: data?.description,
+              room_id: data?.room_id?._id,
+              RoomColor: "#7499e1",
             };
             array.push(test);
           });
-        }else{
-          const FilterData = res?.data?.payload?.data?.filter((item:any) => item?.room_id?._id === selectedRoom?.roomID)
+        } else {
+          const FilterData = res?.data?.payload?.data?.filter(
+            (item: any) => item?.room_id?._id === selectedRoom?.roomID
+          );
           FilterData?.map((data: any, i: any) => {
             const Filterobj: any = {
               id: data?._id,
@@ -71,60 +140,31 @@ function Calender(props:any) {
               StartTime: moment(data?.startTime).subtract(330, "minute")._d,
               EndTime: moment(data?.endTime).subtract(330, "minute")._d,
               length: data?.length,
-              description:data?.description,
-              room_id : data?.room_id?._id
+              description: data?.description,
+              room_id: data?.room_id?._id,
             };
             array.push(Filterobj);
           });
-            
         }
         setMeetingData(array);
       })
-      .catch((error) => {
-        // alert("Error");
-      });
+      .catch((error) => {});
   };
 
   const handleSubmit = () => {
     scheduleObj.closeEditor();
   };
 
-  const data = [
-    {
-      Id: 1,
-      Subject: "Meeting",
-      StartTime: new Date(2023, 2, 15, 10, 0),
-      EndTime: new Date(2023, 2, 15, 12, 30),
-      Status: "Completed",
-      Priority: "High",
-    },
-    {
-      Id: 2,
-      Subject: "Meeting 2",
-      StartTime: new Date(2023, 2, 16, 10, 0),
-      EndTime: new Date(2023, 2, 16, 12, 30),
-      Status: "Completed",
-      Priority: "High",
-    },
-  ];
-
   const editorTemplate = (event: any, props: any) => {
-    if(event?.id){
-      const FilterData = meetingData?.find((item:any) => item?.id === event?.id)
-      console.log("FilterDaweqweta",FilterData);
-    }
-
-    
     return props !== undefined ? (
       <div>
         <div>
-        
           <ReserviereModal
             addEvent={() => handleSubmit()}
             event={event}
             editAppointment={props}
-            getScheduleDetail={()=>getScheduleDetails()}
-            selectedRoom = {selectedRoom}
+            getScheduleDetail={() => getScheduleDetails()}
+            selectedRoom={selectedRoom}
             setMeetingData={setMeetingData}
             roomData={roomData}
           />
@@ -135,43 +175,53 @@ function Calender(props:any) {
     );
   };
 
+  const onEventRendered = (args: any) => {
+    applyCategoryColor(args);
+  };
+  const applyCategoryColor = (args: any) => {
+    let categoryColor = "#144337";
+    args.element.style.backgroundColor = categoryColor;
+  };
+
   return (
     <>
-    
       <ScheduleComponent
-      
+        locale="es"
         selectedDate={new Date()}
         width="100%"
         height="700px"
         eventSettings={{
           dataSource: meetingData,
-        }} 
-        timeScale={{slotCount:2}}
-        
-        // timeScale={{
-        //         enable: true,
-        //         interval: this.state.interval,
-        //         slotCount: this.state.interval / 15,
-        //       }}  
+        }}
+        timeScale={{ slotCount: 2 }}
+        delayUpdate="true"
+        timeFormat="HH:mm"
         cssClass="group-editing"
-        editorTemplate={(e:any) => editorTemplate(e, isAddEvent)}
+        editorTemplate={(e: any) => editorTemplate(e, isAddEvent)}
         showQuickInfo={false}
         ref={(schedule) => (scheduleObj = schedule)}
-        // startHour={"01:00"}
-        // endHour={"12:00"}
-      
+        eventRendered={(event) => onEventRendered(event)}
       >
+        <ResourcesDirective>
+          <ResourceDirective colorField="RoomColor" />
+        </ResourcesDirective>
+
         <ViewsDirective>
-          <ViewDirective option="WorkWeek" startHour="00:00" endHour="24:00" />
-          <ViewDirective option="Week" startHour="00:00" endHour="24:00" />
-          <ViewDirective option="Month" showWeekend={false} />
+          <ViewDirective option="WorkWeek" />
+          <ViewDirective option="Week" />
+          <ViewDirective option="Month" showWeekend={true} />
         </ViewsDirective>
 
         <Inject services={[Day, Week, WorkWeek, Month, Agenda]} />
       </ScheduleComponent>
 
-          {addMeeting && <ReserviereModal roomData={roomData} isAddMeeting={isAddMeeting} getScheduleDetail={getScheduleDetails}/>}
-
+      {addMeeting && (
+        <ReserviereModal
+          roomData={roomData}
+          isAddMeeting={isAddMeeting}
+          getScheduleDetail={getScheduleDetails}
+        />
+      )}
     </>
   );
 }
