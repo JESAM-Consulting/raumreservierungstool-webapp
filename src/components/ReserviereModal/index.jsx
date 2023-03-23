@@ -193,7 +193,6 @@ export default function ReserviereModal(props) {
   };
 
   const handleOnDelete = () => {
-    console.log("event?.id",event?.id);
     axios
       .delete(`${ApiRoutes}/meeting/${event?.id}`)
       .then((response) => {
