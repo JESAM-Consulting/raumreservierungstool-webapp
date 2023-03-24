@@ -30,7 +30,7 @@ import { Ajax, L10n, loadCldr } from "@syncfusion/ej2-base";
 loadCldr(numberingSystems, gregorian, numbers, timeZoneNames);
 
 L10n.load({
-  es: {
+  de: {
     schedule: {
       day: "Heute",
       week: "Woche",
@@ -114,19 +114,26 @@ function Calender(props: any) {
       .get(`${ApiRoutes}/meeting`)
       .then((res) => {
         const array: any = [];
-
+        
         if (selectedRoom?.roomID === "all") {
+
           res?.data?.payload?.data?.map((data: any, i: any) => {
+
+            
             const test: any = {
               id: data?._id,
               Subject: data?.name,
-              StartTime: moment(data?.startTime).subtract(330, "minute")._d,
-              EndTime: moment(data?.endTime).subtract(330, "minute")._d,
+              // StartTime: moment(data?.startTime).utc(),
+              // EndTime: moment(data?.endTime).utc(),
+              StartTime: moment(data?.startTime).subtract(60, "minute")._d,
+              EndTime: moment(data?.endTime).subtract(60, "minute")._d,
               length: data?.length,
               description: data?.description,
               room_id: data?.room_id?._id,
               RoomColor: "#7499e1",
             };
+            console.log("data?.startTime",data);
+
             array.push(test);
           });
         } else {
@@ -137,9 +144,9 @@ function Calender(props: any) {
             const Filterobj: any = {
               id: data?._id,
               Subject: data?.name,
-              StartTime: moment(data?.startTime).subtract(330, "minute")._d,
-              EndTime: moment(data?.endTime).subtract(330, "minute")._d,
-              length: data?.length,
+              StartTime: moment(data?.startTime).subtract(60, "minute")._d,
+              EndTime: moment(data?.endTime).subtract(60, "minute")._d,
+              // length: data?.length,
               description: data?.description,
               room_id: data?.room_id?._id,
             };
@@ -148,7 +155,9 @@ function Calender(props: any) {
         }
         setMeetingData(array);
       })
-      .catch((error) => {});
+      .catch((error) => {
+
+      });
   };
 
   const handleSubmit = () => {
@@ -185,8 +194,9 @@ function Calender(props: any) {
 
   return (
     <>
+
       <ScheduleComponent
-        locale="es"
+        locale="de"
         selectedDate={new Date()}
         width="100%"
         height="700px"

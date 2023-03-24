@@ -14,6 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 
 export default function ReserviereModal(props) {
   const { addEvent, getScheduleDetail, event, isAddMeeting, roomData } = props;
+  const date = new Date()
+  console.log("datedate",date);
   const [errors, setErrors] = useState({});
   const [inputValue, setInputValue] = useState({
     name: "",
@@ -59,6 +61,8 @@ export default function ReserviereModal(props) {
         });
       }
     } else {
+      console.log("eventevent",event);
+
       setInputValue({
         name: "",
         room_id: "",
@@ -117,17 +121,19 @@ export default function ReserviereModal(props) {
     //   isFormValid = false;
     //   errors["length"] = "*eingeben Länge";
     // }
-    if (inputValue && !inputValue?.description) {
-      isFormValid = false;
-      errors["description"] = "*Bitte geben Sie eine Beschreibung ein";
-    }
+    // if (inputValue && !inputValue?.description) {
+    //   isFormValid = false;
+    //   errors["description"] = "*Bitte geben Sie eine Beschreibung ein";
+    // }
 
     setErrors(errors);
     return isFormValid;
   };
 
   const handleOnSubmitData = async () => {
+
     if (validationData()) {
+
       const payload = {
         name: inputValue?.name,
         room_id: inputValue?.room_id,
@@ -136,9 +142,10 @@ export default function ReserviereModal(props) {
 
         startTime: `${inputValue?.startDate}T${inputValue?.startTime}:00.000Z`,
         endTime: `${inputValue?.startDate}T${inputValue?.endTime}:00.000Z`,
+        // startTime: moment(`${inputValue?.startDate}T${inputValue?.startTime}:00.0000Z`).
 
         // length: inputValue?.length,
-        description: inputValue?.description,
+        description: inputValue?.description, 
       };
       await axios
         .post(`${ApiRoutes}/meeting`, payload)
@@ -155,11 +162,14 @@ export default function ReserviereModal(props) {
           toast.error(
             error?.response?.data?.message === "Meeting already exists."
               ? "Treffen existiert bereits."
+              : error?.response?.data?.message === "meeting start time or end time greter than current time or metting endtime before start time" ? 
+              "Besprechung der Startzeit oder der Endzeit über die aktuelle Zeit- oder Besprechungsende vor der Startzeit"
               : "Etwas ist schief gelaufen!!"
           );
         });
     }
   };
+
 
   const handleOnUpdate = () => {
     if (validationData()) {
@@ -173,7 +183,10 @@ export default function ReserviereModal(props) {
         endTime: `${inputValue?.startDate}T${inputValue?.endTime}:00.000Z`,
 
         // length: inputValue?.length,
-        description: inputValue?.description,
+        ...inputValue?.description && ({
+          description: inputValue?.description,
+        }),
+       
       };
       axios
         .put(`${ApiRoutes}/meeting/${event?.id}`, payload)
@@ -186,6 +199,8 @@ export default function ReserviereModal(props) {
           toast.error(
             error?.response?.data?.message === "Meeting already exists."
               ? "Treffen existiert bereits."
+              : error?.response?.data?.message === "meeting start time or end time greter than current time or metting endtime before start time" ? 
+              "Besprechung der Startzeit oder der Endzeit über die aktuelle Zeit- oder Besprechungsende vor der Startzeit"
               : "Etwas ist schief gelaufen!!"
           );
         });

@@ -1,12 +1,12 @@
 {
   "main": {
-    "es": {
+    "de": {
       "identity": {
         "version": {
           "_number": "$Revision: 13722 $",
           "_cldrVersion": "32"
         },
-        "language": "es"
+        "language": "de"
       },
       "dates": {
         "timeZoneNames": {
