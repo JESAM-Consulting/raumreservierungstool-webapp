@@ -114,12 +114,20 @@ function Calender(props: any) {
       .get(`${ApiRoutes}/meeting`)
       .then((res) => {
         const array: any = [];
-        
-        if (selectedRoom?.roomID === "all") {
 
+        if (selectedRoom?.roomID === "all") {
           res?.data?.payload?.data?.map((data: any, i: any) => {
 
-            
+            let timeInterval: any = "";
+
+            if (data?._id === "6426cb3a64a40391edc0809b") {
+              timeInterval = "FREQ=DAILY;INTERVAL=1;COUNT=5000";
+            } else if (res?.data === "everyWeek") {
+              timeInterval = "FREQ=DAILY;INTERVAL=7;COUNT=5000";
+            } else {
+              timeInterval = "";
+            }
+
             const test: any = {
               id: data?._id,
               Subject: data?.name,
@@ -131,8 +139,11 @@ function Calender(props: any) {
               description: data?.description,
               room_id: data?.room_id?._id,
               RoomColor: "#7499e1",
+              RecurrenceRule: timeInterval,
+              // Priority: 'High'
             };
-            console.log("data?.startTime",data);
+
+            console.log("data?.startTime", data);
 
             array.push(test);
           });
@@ -155,9 +166,7 @@ function Calender(props: any) {
         }
         setMeetingData(array);
       })
-      .catch((error) => {
-
-      });
+      .catch((error) => {});
   };
 
   const handleSubmit = () => {
@@ -165,6 +174,8 @@ function Calender(props: any) {
   };
 
   const editorTemplate = (event: any, props: any) => {
+    console.log("args.type",event, props);
+
     return props !== undefined ? (
       <div>
         <div>
@@ -192,9 +203,12 @@ function Calender(props: any) {
     args.element.style.backgroundColor = categoryColor;
   };
 
+  const onSelect = (args) => {
+    console.log("args", args?.requestType);
+  };
+
   return (
     <>
-
       <ScheduleComponent
         locale="de"
         selectedDate={new Date()}
@@ -211,6 +225,7 @@ function Calender(props: any) {
         showQuickInfo={false}
         ref={(schedule) => (scheduleObj = schedule)}
         eventRendered={(event) => onEventRendered(event)}
+        select={(e) => onSelect(e)}
       >
         <ResourcesDirective>
           <ResourceDirective colorField="RoomColor" />

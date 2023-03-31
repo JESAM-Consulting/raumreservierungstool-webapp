@@ -220,6 +220,8 @@ export default function ReserviereModal(props) {
       });
   };
 
+  console.log("inputValue?.repeatData",inputValue?.repeatData);
+
   return (
     <div>
       <div className="modal-wrapper">
@@ -235,6 +237,32 @@ export default function ReserviereModal(props) {
             </button>
           </div>
           <div className="left-right-alignment">
+
+          <div className="grid-input">
+              <div>
+                <span>Repeat:</span>
+              </div>
+              <div className="select-dropdown">
+                <select
+                  name="repeatData"
+                  id="repeatData"
+                  value={inputValue?.repeatData}
+                  onChange={(e) => handleOnChange(e)}
+                >
+                  <option value="Doesnotrepeat">Does not repeat</option>
+                  <option value="everyDay">Every day</option>
+                  <option value="everyWeek">Every Week</option>
+                  <option value="everyMonth">Every month</option>
+                  <option value="everyYear">Every year</option>
+                  <option value="Custom">Custom...</option>
+                </select>
+
+                <span style={{ color: "red", textAlign: "left" }}>
+                  {errors["roomId"]}
+                </span>
+              </div>
+            </div>
+
             <div className="grid-input">
               <div>
                 <span>Name:</span>
@@ -265,7 +293,7 @@ export default function ReserviereModal(props) {
                   <option selected>Raum auswählen</option>
                   {roomData &&
                     roomData?.map((item, i) => {
-                      return <option value={item?._id}>{item?.name}</option>;
+                      return <option value={item?._id}>{item?.name} ({i+1}. OG)</option>;
                     })}
                 </select>
 

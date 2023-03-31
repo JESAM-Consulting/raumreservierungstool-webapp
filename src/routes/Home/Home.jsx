@@ -65,7 +65,7 @@ export default function Home() {
                   <option value="all">Raum auswählen</option>
                   {roomData &&
                     roomData?.map((item, i) => {
-                      return <option value={item?._id}>{item?.name}</option>;
+                      return <option value={item?._id}>{item?.name} ({i+1}. OG)</option>;
                     })}
                 </select>
               </div>
