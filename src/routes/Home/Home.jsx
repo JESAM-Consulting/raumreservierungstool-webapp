@@ -53,7 +53,7 @@ export default function Home() {
           <div className="home-header-alignment">
             <div className="left-content">
               <p>Raumreservierung </p>
-              <button>Raum reservieren</button>
+              <button onClick={() => isAddMeeting(true)}>Raum reservieren</button>
             </div>
             <div className="center-content">
               <div className="select-dropdown">
@@ -65,7 +65,11 @@ export default function Home() {
                   <option value="all">Raum auswählen</option>
                   {roomData &&
                     roomData?.map((item, i) => {
-                      return <option value={item?._id}>{item?.name} ({i+1}. OG)</option>;
+                      if (item?._id === '65cf4ce5c25a98eeae13e75b') {
+                        return null; // Skip rendering this option
+                      }
+                      let floorNumber = (item?._id === '65cf5249c25a98eeae13e7af') ? i+1-2 : i+1;
+                      return <option value={item?._id}>{item?.name} ({floorNumber}. OG)</option>;
                     })}
                 </select>
               </div>

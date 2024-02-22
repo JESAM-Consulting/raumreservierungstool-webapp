@@ -238,30 +238,7 @@ export default function ReserviereModal(props) {
           </div>
           <div className="left-right-alignment">
 
-          <div className="grid-input">
-              <div>
-                <span>Repeat:</span>
-              </div>
-              <div className="select-dropdown">
-                <select
-                  name="repeatData"
-                  id="repeatData"
-                  value={inputValue?.repeatData}
-                  onChange={(e) => handleOnChange(e)}
-                >
-                  <option value="Doesnotrepeat">Does not repeat</option>
-                  <option value="everyDay">Every day</option>
-                  <option value="everyWeek">Every Week</option>
-                  <option value="everyMonth">Every month</option>
-                  <option value="everyYear">Every year</option>
-                  <option value="Custom">Custom...</option>
-                </select>
-
-                <span style={{ color: "red", textAlign: "left" }}>
-                  {errors["roomId"]}
-                </span>
-              </div>
-            </div>
+          
 
             <div className="grid-input">
               <div>
@@ -293,7 +270,11 @@ export default function ReserviereModal(props) {
                   <option selected>Raum auswählen</option>
                   {roomData &&
                     roomData?.map((item, i) => {
-                      return <option value={item?._id}>{item?.name} ({i+1}. OG)</option>;
+                      if (item?._id === '65cf4ce5c25a98eeae13e75b') {
+                        return null; // Skip rendering this option
+                      }
+                      let floorNumber = (item?._id === '65cf5249c25a98eeae13e7af') ? i+1-2 : i+1;
+                      return <option value={item?._id}>{item?.name} ({floorNumber}. OG)</option>;
                     })}
                 </select>
 
@@ -348,6 +329,30 @@ export default function ReserviereModal(props) {
                 />
                 <span style={{ color: "red", textAlign: "left" }}>
                   {errors["endTime"]}
+                </span>
+              </div>
+            </div>
+            <div className="grid-input">
+              <div>
+                <span>Repeat:</span>
+              </div>
+              <div className="select-dropdown">
+                <select
+                  name="repeatData"
+                  id="repeatData"
+                  value={inputValue?.repeatData}
+                  onChange={(e) => handleOnChange(e)}
+                >
+                  <option value="Doesnotrepeat">Does not repeat</option>
+                  <option value="everyDay">Every day</option>
+                  <option value="everyWeek">Every Week</option>
+                  <option value="everyMonth">Every month</option>
+                  <option value="everyYear">Every year</option>
+                  <option value="Custom">Custom...</option>
+                </select>
+
+                <span style={{ color: "red", textAlign: "left" }}>
+                  {errors["roomId"]}
                 </span>
               </div>
             </div>
