@@ -237,9 +237,6 @@ export default function ReserviereModal(props) {
             </button>
           </div>
           <div className="left-right-alignment">
-
-          
-
             <div className="grid-input">
               <div>
                 <span>Name:</span>
